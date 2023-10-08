@@ -3,8 +3,10 @@ package analyser
 import (
 	"encoding/xml"
 	"io"
+	"os"
 
-	xmlHelpers "github.com/jm-szlendak/go-analyze/helpers"
+	"github.com/jm-szlendak/go-analyze/utils"
+	"github.com/jm-szlendak/go-analyze/xmlHelpers"
 )
 
 type PostAnalysisResults struct {
@@ -16,6 +18,8 @@ type PostAnalysisResults struct {
 
 func AnalysePosts(xmlDecoder *xml.Decoder) (PostAnalysisResults, error) {
 	results := PostAnalysisResults{}
+
+	printMemStats := os.Getenv("MEMSTATS") == "1"
 
 	for {
 		token, err := xmlDecoder.Token()
@@ -51,6 +55,10 @@ func AnalysePosts(xmlDecoder *xml.Decoder) (PostAnalysisResults, error) {
 		}
 
 		results.TotalPosts++
+
+		if printMemStats {
+			utils.PrintMemUsage()
+		}
 
 	}
 
